@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>node-web-console-lite</title>
+    <style>
+    html,body{margin:0;padding:0;}
+    #term{width:100%;position:fixed;top:0;left:0;height:30px;}
+    #result{margin-top:35px;}
+    </style>
+</head>
+<body>
+<input type="text" id="term">
+<div id="result">
+</div>
+<script>
+    term.focus();
+term.onkeydown=function(event){
+    if(event.keyCode == 13){
+        var d = {
+            cmd:this.value.trim()
+        };
+        this.value = '';
+
+        fetch('/rpc',{
+            method:'POST',
+            mode:'cors',
+            body:JSON.stringify(d),
+            headers:{
+                'content-type':'application/json'
+            }
+        }).then(d=>d.json())
+            .then(res=>{
+                var template = `
+    <div class="result">
+        <div class="stdin">
+            <span class="cwd">${res.cwd}$</span>
+            <span class="cmd">${res.cmd}</span></div>
+        <pre class="stdout">${res.res.replace(/<DIR>/g,'[DIR]')}</pre>
+    </div>`;
+                result.innerHTML+=template;
+                document.documentElement.scrollTo(0,document.body.scrollHeight);
+            })
+    }
+}
+</script>
+</body>
+</html>

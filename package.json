@@ -1,0 +1,17 @@
+{
+  "name": "node-web-console-lite",
+  "version": "1.0.0",
+  "description": "无依赖,windows下",
+  "main": "watcher.js",
+  "scripts": {
+    "dev": "set NODE_ENV=dev&& node watcher.js",
+    "start":"node watcher.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/whiter001/node-web-console-lite"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
