@@ -11,3 +11,5 @@ set NODE_ENV=dev&& node -e "console.log(process.env.NODE_ENV,process.env.NODE_EN
 dev true
 
 ```
+
+不支持用start.cs后台启动; 所以需要直接从命令行里直接启动
