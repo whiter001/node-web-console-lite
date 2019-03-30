@@ -3,8 +3,9 @@ const log = require('./log.js').debug('watcher:'),
     {spawn} = require('child_process');
 log('start..');
 var cp;
+var rpcpath = './src/rpc.js';
 (function createNewProcess(){
-    cp = spawn('node',['./rpc.js']);
+    cp = spawn('node',[rpcpath]);
     cp.stdout.on('data',d=>{
         log(d.toString());
     })
@@ -19,8 +20,8 @@ var cp;
 })()
 
 var ischanged = false;
-var watcher = watch('./rpc.js',(eventType,fileName)=>{
-    if(fileName >> 0 > 0) return;
+var watcher = watch(rpcpath,(eventType,fileName)=>{
+    if(+fileName > 0) return;
     if(ischanged) return;
     ischanged = setTimeout(()=>{
         log(fileName + ':changed');

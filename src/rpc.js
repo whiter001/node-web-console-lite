@@ -1,5 +1,5 @@
 const http = require('http'),
-    {extname} = require('path'),
+    {extname,join} = require('path'),
     {execSync} = require('child_process'),
     fs = require('fs'),
     cluster = require('cluster'),
@@ -35,18 +35,22 @@ else if(cluster.isWorker){
 
                 var result = '';
                 var now = new Date();
-                if(data.cmd.slice(0,3).toLowerCase() == 'cd '){
+                if(data.cmd === 'files'){
+                    result = fs.readdirSync(cwd,{withFileTypes:true})
+                                .filter(dirent=>dirent.isFile()).map(dirent=>dirent.name);
+                }
+                else if(data.cmd.slice(0,3).toLowerCase() == 'cd '){
                     try{
                         process.chdir(data.cmd.slice(3));
                         cwd = process.cwd();
                     }catch(err){
-                        if(err.code == 'ENOENT'){
-                            result = `Error: ENOENT: no such file or directory, chdir '${err.path}'`
-                        }
+                        log(err+'');
+                        result = '' + err;
                     }
-                }else{
+                }
+                else{
                     try{
-                        result = execSync(data.cmd+' 2>&1').toString() || '';
+                        result = execSync(data.cmd+' 2>&1',{timeout:data.timeout}).toString() || '';
                     }catch(err){
                         log(err.stdout && err.stdout.toString() || err);
                         result = err.stdout && err.stdout.toString();
@@ -56,7 +60,7 @@ else if(cluster.isWorker){
                     cwd:cwd,
                     cmd:data.cmd,
                     time: (new Date() - now) / 1e3 + ' s',
-                    res:result
+                    res:result,
                 }
 
                 if(data){
@@ -68,15 +72,28 @@ else if(cluster.isWorker){
             })
         }
         else if(req.method == 'GET'){
-            var _url = req.url == '/' ? '/rpc.html' : req.url;
-            var ext = extname(_url).slice(1);
-            res.writeHead(200,{'content-type':mime[ext]})
-            _url = __dirname + _url;
-            if(fs.existsSync(_url)){
-                fs.createReadStream(_url).pipe(res);
+            if(req.url.startsWith('/files/')){
+                var _url = join(cwd,req.url.replace('/files/',''));
+                log('download:'+_url);
+                if(fs.existsSync(_url)){
+                    res.writeHead(200,{'content-type':'application/octet-stream'})
+                    fs.createReadStream(_url).pipe(res);
+                }else{
+                    res.writeHead(200,{'content-type':'text/html'})
+                    res.end('<title>404</title>Not Found<script>setTimeout(close,2e3)</script>')
+                }
             }
-            else{
-                res.end();
+            else {
+                var _url = req.url == '/' ? '/index.html' : req.url;
+                var ext = extname(_url).slice(1);
+                res.writeHead(200,{'content-type':mime[ext] || 'application/octet-stream'})
+                _url = join(__dirname,'../web',_url);
+                if(fs.existsSync(_url)){
+                    fs.createReadStream(_url).pipe(res);
+                }
+                else{
+                    res.end();
+                }
             }
         }
     }).listen(9001,()=>{

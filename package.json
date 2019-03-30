@@ -2,10 +2,10 @@
   "name": "node-web-console-lite",
   "version": "1.0.0",
   "description": "无依赖,windows下",
-  "main": "watcher.js",
+  "main": "src/watcher.js",
   "scripts": {
-    "dev": "set NODE_ENV=dev&& node watcher.js",
-    "start":"node watcher.js"
+    "dev": "set NODE_ENV=dev&& node src/watcher.js",
+    "start":"node src/watcher.js"
   },
   "repository": {
     "type": "git",

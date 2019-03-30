@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>node-web-console-lite</title>
+    <style>
+    html,body{margin:0;padding:20px 0 0;height:100%;box-sizing:border-box;}
+    ul,li{margin:0;padding:0;}
+    #term{width:100%;position:fixed;top:0;left:0;height:30px;}
+    .cmd{color:red;}
+    #result{width:700px;float:left;height:calc(100% - 35px);padding-left:10px;overflow-x:hidden;}
+    #cmdhistory{min-width:300px;float:left;height:calc(100% - 35px);padding-left:10px;overflow-x:hidden;border-top:1px dotted gray;}
+    #macroslist{width:300px;float:left;height:calc(100% - 35px);padding-left:10px;overflow-x:hidden;margin-left:20px;}
+    .hide{display:none;}
+    .files a{margin-right:15px;word-break:break-all;display:inline-block;text-decoration:none;}
+    </style>
+</head>
+<body>
+<input type="text" list="cmddatalist" id="term">
+<datalist id="cmddatalist"> </datalist>
+<div id="result"></div>
+<ul id="cmdhistory"></ul>
+<ul id="macroslist">
+    <li>1 [command] --&gt;不等待窗口程序结束,默认:timeout:2s</li>
+    <li>files --&gt; 当前cwd文件可下载</li>
+    <li>cd [dir]--&gt;切换工作路径</li>
+    <li><del>findstr /s /n "str" *.js</del></li>
+<li><hr/></li>
+</ul>
+<script src="index.js"></script>
+</body>
+</html>
